@@ -1,14 +1,25 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.9)
 
 project(Client LANGUAGES CXX)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+set(VERSION "0.0.1")
+set(VENDOR "ZJUNlict")
+set(MAINTAINER "ZJUNlict <zjunlict.ssl@gmail.com>")
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
+standard_config()
+standard_paths(${PROJECT_SOURCE_DIR} bin lib)
+
 set(libs)
-# find packages
-## find protobuf
+
+# define protobuf generater
 find_package(Protobuf REQUIRED)
-include_directories(${PROTOBUF_INCLUDE_DIRS})
-list(APPEND libs ${Protobuf_LIBRARIES})
 function(get_pb_file H CPP)
     list(APPEND PH ${ARGN})
     list(APPEND PC ${ARGN})
@@ -21,8 +32,13 @@ function(get_pb_file H CPP)
 endfunction()
 SET(PROTO_META_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR}/proto)
 file(MAKE_DIRECTORY ${PROTO_META_BASE_DIR})
-LIST(APPEND PROTO_FLAGS -I${CMAKE_CURRENT_SOURCE_DIR}/src/share/proto)
-file(GLOB PROTO_FILES "${CMAKE_SOURCE_DIR}/src/share/proto/*.proto")
+
+add_subdirectory(plugins)
+
+# find packages
+## find protobuf
+LIST(APPEND PROTO_FLAGS -I${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
+file(GLOB PROTO_FILES "${CMAKE_SOURCE_DIR}/src/proto/*.proto")
 ## protobuf_generate_cpp(PROTO_CPP PROTO_H ${PROTO_FILES})
 FOREACH(FIL ${PROTO_FILES})
     GET_FILENAME_COMPONENT(ABS_FIL ${FIL} ABSOLUTE)
@@ -32,12 +48,8 @@ FOREACH(FIL ${PROTO_FILES})
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 ENDFOREACH()
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+include_directories(${PROTOBUF_INCLUDE_DIRS})
+list(APPEND libs ${Protobuf_LIBRARIES})
 
 ## find Eigen
 find_package(Eigen3 REQUIRED)
@@ -82,7 +94,6 @@ get_pb_file(PROTO_H PROTO_CPP ${PROTO_LIST})
 set(PROJECT_INCLUDE_DIRS
     ${CMAKE_BINARY_DIR}/proto
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/share
     ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/vision
     ${CMAKE_CURRENT_SOURCE_DIR}/src/vision/log
@@ -91,7 +102,6 @@ include_directories(${PROJECT_INCLUDE_DIRS})
 ## core cpp files
 file(GLOB CPPFILES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/share/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/vision/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/vision/log/*.cpp"
