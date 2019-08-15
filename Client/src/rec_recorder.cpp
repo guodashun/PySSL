@@ -40,12 +40,12 @@ void RecRecorder::store() {
         //    Field::repaintLock();
         //    qDebug() << "I AM FUCKING RUNNING";
         //    recMsg = recMsgs.add_recmsgs();
-        ZSS::Protocol::RecMessage recMsg;
-        ZSS::Protocol::TeamRobotMsg* processMsg;
-        ZSS::Protocol::TeamRobotMsg* maintain;
-        ZSS::Protocol::Robot4Rec* robot4Rec;
-        ZSS::Protocol::Ball4Rec* ball4Rec;
-        ZSS::Protocol::Debug_Msgs* debugMsgs;
+        RecMessage recMsg;
+        TeamRobotMsg* processMsg;
+        TeamRobotMsg* maintain;
+        Robot4Rec* robot4Rec;
+        Ball4Rec* ball4Rec;
+        Debug_Msgs* debugMsgs;
         //ctrlc
         GlobalData::instance()->ctrlCMutex.lock();
         recMsg.set_ctrlc(GlobalData::instance()->ctrlC);

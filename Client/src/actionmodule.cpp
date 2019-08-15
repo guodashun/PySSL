@@ -21,7 +21,7 @@ const double LOW_BATTERY = 196.0;
 const double FULL_CAPACITANCE = 254.0;
 const double LOW_CAPACITANCE = 29.0;
 auto zpm = ZSS::ZParamManager::instance();
-void encodeLegacy(const ZSS::Protocol::Robot_Command&, QByteArray&, int);
+void encodeLegacy(const Robot_Command&, QByteArray&, int);
 quint8 kickStandardization(quint8, bool, quint16);
 const QString radioSendAddress[PARAM::TEAMS] = {"10.10.11.22", "10.10.11.22"};
 const QString radioReceiveAddress[PARAM::TEAMS] = {"10.10.11.23", "10.10.11.23"};
@@ -160,7 +160,7 @@ void ActionModule::sendStartPacket(int t, int frequency) {
     qDebug() << "Frequency:" << frequency << " Send IP:" << radioSendAddress[t] << " Receive IP:" << radioReceiveAddress[t];
 }
 
-void ActionModule::sendLegacy(int t, const ZSS::Protocol::Robots_Command& commands) {
+void ActionModule::sendLegacy(int t, const Robots_Command& commands) {
     // this 't' is color
     auto& socket = sendSocket;
     int id = -1;
@@ -266,7 +266,7 @@ void ActionModule::readData() {
     }
 }
 namespace {
-void encodeLegacy(const ZSS::Protocol::Robot_Command& command, QByteArray& tx, int num) {
+void encodeLegacy(const Robot_Command& command, QByteArray& tx, int num) {
     // send back to vision module
     // num 0 ~ 3
     // id  0 ~ 15

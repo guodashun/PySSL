@@ -96,7 +96,7 @@ void SimModule::readBlueData() {
     while(true){
         std::this_thread::sleep_for(std::chrono::microseconds(500));
         while(blueReceiveSocket.state() == QUdpSocket::BoundState && blueReceiveSocket.hasPendingDatagrams()) {
-            ZSS::Protocol::Robots_Status robotsPacket;
+            Robots_Status robotsPacket;
             datagram.resize(blueReceiveSocket.pendingDatagramSize());
             blueReceiveSocket.readDatagram(datagram.data(), datagram.size());
             robotsPacket.ParseFromArray(datagram, datagram.size());
@@ -124,7 +124,7 @@ void SimModule::readYellowData() {
     while(true){
         std::this_thread::sleep_for(std::chrono::microseconds(500));
         while(yellowReceiveSocket.state() == QUdpSocket::BoundState && yellowReceiveSocket.hasPendingDatagrams()) {
-            ZSS::Protocol::Robots_Status robotsPacket;       
+            Robots_Status robotsPacket;       
             datagram.resize(yellowReceiveSocket.pendingDatagramSize());
             yellowReceiveSocket.readDatagram(datagram.data(), datagram.size());
             robotsPacket.ParseFromArray(datagram, datagram.size());
@@ -145,7 +145,7 @@ void SimModule::readYellowData() {
     }
 }
 
-void SimModule::sendSim(int t, ZSS::Protocol::Robots_Command& command) {
+void SimModule::sendSim(int t, Robots_Command& command) {
     grsim_commands->set_timestamp(0);
     if (t == 0) {
         grsim_commands->set_isteamyellow(false);

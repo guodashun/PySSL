@@ -1,7 +1,5 @@
 syntax = "proto2";
 
-package ZSS.Protocol;
-
 import "zss_debug.proto";
 
 message RecMessages {

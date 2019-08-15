@@ -816,7 +816,7 @@ void Field::drawSelectedArea() {
 }
 void Field::drawDebugMessages(int team) {
     static qreal chordAngel = qRadiansToDegrees(qAcos(1.0 * carFaceWidth / carDiameter));
-    static ZSS::Protocol::Debug_Msgs msgs;
+    static Debug_Msgs msgs;
     GlobalData::instance()->debugMutex.lock();
     if (team == 0) {
         msgs.ParseFromArray(GlobalData::instance()->debugBlueMessages.data(), GlobalData::instance()->debugBlueMessages.size());
@@ -831,7 +831,7 @@ void Field::drawDebugMessages(int team) {
         pixmapPainter.setPen(QPen(DEBUG_COLOR[msg.color()], ::w(10)));
         double radius;
         switch(msg.type()) {
-        case ZSS::Protocol::Debug_Msg_Debug_Type_ARC:
+        case Debug_Msg_Debug_Type_ARC:
             radius = (msg.arc().rectangle().point2().x() - msg.arc().rectangle().point1().x()) / 2;
             pixmapPainter.drawArc(QRectF( ::x(double(msg.arc().rectangle().point1().x()) * 10),
                                           ::y(double(-msg.arc().rectangle().point1().y()) * 10),
@@ -841,10 +841,10 @@ void Field::drawDebugMessages(int team) {
                                   msg.arc().end() * 16);
 
             break;
-        case ZSS::Protocol::Debug_Msg_Debug_Type_LINE:
+        case Debug_Msg_Debug_Type_LINE:
             pixmapPainter.drawLine(::x(msg.line().start().x() * 10), ::y(-msg.line().start().y() * 10), ::x(msg.line().end().x() * 10), ::y(-msg.line().end().y() * 10));
             break;
-        case ZSS::Protocol::Debug_Msg_Debug_Type_Points: {
+        case Debug_Msg_Debug_Type_Points: {
             QVector<QLine> lines;
             for(int i = 0; i < msg.points().point_size(); i++) {
                 lines.push_back(QLine(::x((msg.points().point(i).x() + debugPointSize) * 10), ::y(-(msg.points().point(i).y() + debugPointSize) * 10), ::x((msg.points().point(i).x() - debugPointSize) * 10), ::y(-(msg.points().point(i).y() - debugPointSize) * 10)));
@@ -853,14 +853,14 @@ void Field::drawDebugMessages(int team) {
             pixmapPainter.drawLines(lines);
             break;
         }
-        case ZSS::Protocol::Debug_Msg_Debug_Type_TEXT:
+        case Debug_Msg_Debug_Type_TEXT:
             pixmapPainter.drawText(QPointF(::x(msg.text().pos().x() * 10), ::y(-msg.text().pos().y() * 10)), QString::fromStdString(msg.text().text()));
             break;
-        case ZSS::Protocol::Debug_Msg_Debug_Type_ROBOT:
+        case Debug_Msg_Debug_Type_ROBOT:
             pixmapPainter.drawChord(QRectF(::x((msg.robot().pos().x() * 10) - 1.2*carDiameter / 2.0), ::y((-msg.robot().pos().y() * 10) + 1.2*carDiameter / 2.0), ::w((1.2*carDiameter)), ::h(-(1.2*carDiameter))),::a(90.0 - chordAngel - msg.robot().dir()), ::r(180.0 + 2 * chordAngel));
             break;
-        //case ZSS::Protocol::Debug_Msg_Debug_Type_CURVE:
-        //case ZSS::Protocol::Debug_Msg_Debug_Type_POLYGON:
+        //case Debug_Msg_Debug_Type_CURVE:
+        //case Debug_Msg_Debug_Type_POLYGON:
         default:
             qDebug() << "debug message type not support!";
         }
@@ -930,7 +930,7 @@ void Field::receiveScore() {
 }
 void Field::parseScores(QUdpSocket* const socket) {
     static QByteArray datagram;
-    static ZSS::Protocol::Debug_Scores scores;
+    static Debug_Scores scores;
     while (socket->state() == QUdpSocket::BoundState && socket->hasPendingDatagrams()) {
         datagram.resize(socket->pendingDatagramSize());
         socket->readDatagram(datagram.data(), datagram.size());

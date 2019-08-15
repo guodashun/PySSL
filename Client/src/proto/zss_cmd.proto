@@ -1,7 +1,5 @@
 syntax = "proto2";
 
-package ZSS.Protocol;
-
 message Robots_Status{
   repeated Robot_Status robots_status = 1;
 }

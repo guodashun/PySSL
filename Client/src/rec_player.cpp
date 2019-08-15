@@ -69,7 +69,7 @@ bool RecPlayer::good() {
 
 void RecPlayer::sendMessage(const QByteArray& packet) {
 //    qDebug() << "sendmessage is called" ;
-    ZSS::Protocol::RecMessage recMsg;
+    RecMessage recMsg;
     recMsg.ParseFromArray(packet.data(), packet.size());
     //ctrlc
     GlobalData::instance()->ctrlCMutex.lock();
@@ -119,7 +119,7 @@ void RecPlayer::sendMessage(const QByteArray& packet) {
 
     //debugMsgs
     GlobalData::instance()->debugMutex.lock();
-    ZSS::Protocol::Debug_Msgs debugMsgs;
+    Debug_Msgs debugMsgs;
     for (int team = PARAM::BLUE; team <= PARAM::YELLOW; team++) {
         debugMsgs = recMsg.debugmsgs(team);
         int size = debugMsgs.ByteSize();

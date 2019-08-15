@@ -1,7 +1,5 @@
 syntax = "proto2";
 
-package ZSS.Protocol;
-
 message TrainControl{
 	enum State{
 		READY = 0;

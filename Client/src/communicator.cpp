@@ -1,6 +1,7 @@
 #include "communicator.h"
 #include "staticparams.h"
 #include <QNetworkInterface>
+#include <QHostAddress>
 #include "zss_cmd.pb.h"
 #include "actionmodule.h"
 #include "simmodule.h"
@@ -67,7 +68,7 @@ void Communicator::receiveCommand(int t) {
             m_fps.unlock();
             datagram.resize(receiveSocket[t].pendingDatagramSize());
             receiveSocket[t].readDatagram(datagram.data(), datagram.size());
-            ZSS::Protocol::Robots_Command commands;
+            Robots_Command commands;
             commands.ParseFromArray(datagram, datagram.size());
             commandBuffer[t].valid = true;
             for(int i = 0; i < commands.command_size(); i++) {
@@ -91,7 +92,7 @@ void Communicator::sendCommand(int team, int id) {
     bool chip = GlobalData::instance()->robotInformation[team][id].chip;
     robotInfoMutex.unlock();
 
-    ZSS::Protocol::Robot_Status robot_status;
+    Robot_Status robot_status;
     robot_status.set_robot_id(id);
     robot_status.set_infrared(infrared);
     robot_status.set_flat_kick(flat);

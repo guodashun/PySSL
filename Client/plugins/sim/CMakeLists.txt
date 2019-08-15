@@ -56,13 +56,12 @@ list(APPEND PROJECT_INCLUDE_DIRS
     ${CMAKE_BINARY_DIR}/proto
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/physics
-    ${CMAKE_SOURCE_DIR}/Utils
-    ${CMAKE_SOURCE_DIR}/Utils/ZSPlugin
+    ${CMAKE_SOURCE_DIR}/src/utils
 )
 include_directories(${PROJECT_INCLUDE_DIRS})
 
 file(GLOB CPPFILES 
-    "${CMAKE_SOURCE_DIR}/Utils/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/physics/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/physics/*.h"

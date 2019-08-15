@@ -15,7 +15,7 @@ class CDealRobot {
     void mergeRobot();
     void selectRobot();
     void updateVel(int team, ReceiveVisionMessage& result);
-//    bool updateCommand(ZSS::Protocol::Robot_Command command);
+//    bool updateCommand(Robot_Command command);
 
   private:
     Robot robotSeqence[2][PARAM::ROBOTMAXID][PARAM::CAMERA];

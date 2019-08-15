@@ -1,6 +1,7 @@
 #include "paraminterface.h"
 #include "parammanager.h"
 #include "treeitem.h"
+#include <QtDebug>
 #include <regex>
 namespace{
     auto zpm = ZSS::ZParamManager::instance();

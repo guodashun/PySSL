@@ -12,7 +12,7 @@ class ActionModule : public QObject {
   public:
     ActionModule(QObject *parent = 0);
     ~ActionModule();
-    void sendLegacy(int t, const ZSS::Protocol::Robots_Command&);
+    void sendLegacy(int t, const Robots_Command&);
     bool connectRadio(int, int);
     bool disconnectRadio(int);
     void setSimulation(bool);
