@@ -70,6 +70,7 @@ Window {
                 Tab{
                     anchors.fill: parent;
                     title:modelData;
+//                    title:"Vision"
                     Rectangle{
                         border.color: "#555";
                         border.width: 1;
@@ -79,6 +80,8 @@ Window {
                             property int _index:index;
                             type:_index+1;
                             draw:_index == fields.currentIndex;
+//                            type:0;
+//                            draw:true;
                             width:fields.width;
                             height:fields.height - 20;
                         }

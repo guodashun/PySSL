@@ -1,4 +1,5 @@
 #include "simulator.h"
+#include "sim/sslworld.h"
 #include "staticparams.h"
 #include <QtDebug>
 namespace{
@@ -9,7 +10,10 @@ namespace{
 }
 CSimulator::CSimulator(QObject *parent) : QObject(parent)
 {
-    sendSocket.setSocketOption(QAbstractSocket::MulticastTtlOption, 1);
+//    sendSocket.setSocketOption(QAbstractSocket::MulticastTtlOption, 1);
+    declare_publish("sim_packet");
+    this->link(SSLWorld::instance(),"sim_packet");
+
 }
 void CSimulator::setBall(double x,double y,double vx,double vy){
     grSim_Packet packet;
@@ -59,8 +63,10 @@ void CSimulator::controlRobot(int num,bool team){
     send(&packet);
 }
 void CSimulator::send(grSim_Packet* packet){
+    static ZSData data;
     int size = packet->ByteSize();
-    QByteArray buffer(size,0);
-    packet->SerializeToArray(buffer.data(), size);
-    sendSocket.writeDatagram(buffer,size, QHostAddress(ZSS::LOCAL_ADDRESS),ZSS::Athena::SIM_SEND);
+    data.resize(size);
+    packet->SerializeToArray(data.ptr(), size);
+    publish("sim_packet",data);
+//    sendSocket.writeDatagram(buffer,size, QHostAddress(ZSS::LOCAL_ADDRESS),ZSS::Athena::SIM_SEND);
 }

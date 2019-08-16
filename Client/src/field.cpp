@@ -517,14 +517,14 @@ void Field::setSize(int width, int height) {
     zpm->changeParam("canvas/width", canvasWidth);
 }
 void Field::init() {
-    zpm->loadParam(param_width, "field/width", 12000);
-    zpm->loadParam(param_height, "field/height", 9000);
-    zpm->loadParam(param_canvas_width, "field/canvasWidth", 13200);
-    zpm->loadParam(param_canvas_height, "field/canvasHeight", 9900);
-    zpm->loadParam(param_goalWidth, "field/goalWidth", 1200);
+    zpm->loadParam(param_width, "field/width", 6000);
+    zpm->loadParam(param_height, "field/height", 4500);
+    zpm->loadParam(param_canvas_width, "field/canvasWidth", 6600);
+    zpm->loadParam(param_canvas_height, "field/canvasHeight", 4950);
+    zpm->loadParam(param_goalWidth, "field/goalWidth", 800);
     zpm->loadParam(param_goalDepth, "field/goalDepth",  200);
-    zpm->loadParam(param_penaltyWidth, "field/penaltyWidth", 1200);
-    zpm->loadParam(param_penaltyLength, "field/penaltyLength", 2400);
+    zpm->loadParam(param_penaltyWidth, "field/penaltyWidth", 800);
+    zpm->loadParam(param_penaltyLength, "field/penaltyLength", 1600);
     zpm->loadParam(param_centerCircleRadius, "field/centerCircleRadius",  500);
     zpm->loadParam(param_penalty_radius, "field/penalty_radius", 800);
     zpm->loadParam(param_penalty_area_l, "penalty_area_l", 350);
@@ -593,13 +593,13 @@ void Field::drawBallLine() {
     }
 }
 void Field::initPainterPath() {
-    pen.setWidth(::w(30));
+    pen.setWidth(::w(15));
     painterPath = QPainterPath();
     painterPath.addRect(::x(-param_width / 2.0), ::y(-param_height / 2.0), ::w(param_width), ::h(param_height));
     painterPath.addRect(::x(-param_width / 2.0), ::y(-param_goalWidth / 2.0), ::w(-param_goalDepth), ::h(param_goalWidth));
     painterPath.addRect(::x(param_width / 2.0), ::y(-param_goalWidth / 2.0), ::w(param_goalDepth), ::h(param_goalWidth));
-    painterPath.moveTo(::x(-param_width / 2.0), ::y(0));
-    painterPath.lineTo(::x(param_width / 2.0), ::y(0));
+//    painterPath.moveTo(::x(-param_width / 2.0), ::y(0));
+//    painterPath.lineTo(::x(param_width / 2.0), ::y(0));
     painterPath.moveTo(::x(0), ::y(param_height / 2.0));
     painterPath.lineTo(::x(0), ::y(-param_height / 2.0));
     painterPath.addEllipse(::x(-param_centerCircleRadius), ::y(-param_centerCircleRadius), ::w(2 * param_centerCircleRadius), ::h(2 * param_centerCircleRadius));

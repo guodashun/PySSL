@@ -11,6 +11,7 @@ CGlobalData::CGlobalData(): ctrlC(false)
     , processRobot(ZSS::Athena::Vision::ROBOT_STORE_BUFFER) {
     for(int i = 0; i < PARAM::CAMERA; i++) {
         cameraMatrix[i].id = i;
+        cameraControl[i] = true;
     }
 }
 CGeoPoint CGlobalData::saoConvert(CGeoPoint originPoint) {

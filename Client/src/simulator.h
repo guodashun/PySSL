@@ -5,7 +5,8 @@
 #include "singleton.hpp"
 #include "grSim_Packet.pb.h"
 #include <QUdpSocket>
-class CSimulator : public QObject
+#include "zsplugin.hpp"
+class CSimulator : public QObject, public ZSPlugin
 {
     Q_OBJECT
 public:
@@ -20,7 +21,7 @@ signals:
 public slots:
 
 private:
-    QUdpSocket sendSocket;
+//    QUdpSocket sendSocket;
     void send(grSim_Packet*);
 };
 typedef Singleton<CSimulator> Simulator;

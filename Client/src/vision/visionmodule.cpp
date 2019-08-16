@@ -12,10 +12,15 @@
 #include <QElapsedTimer>
 #include "networkinterfaces.h"
 #include <QtDebug>
-
+#include <QTimer>
+#include <thread>
+#include "setthreadname.h"
+#include "sim/sslworld.h"
 namespace {
 auto zpm = ZSS::ZParamManager::instance();
 auto vpm = ZSS::VParamManager::instance();
+QTimer sim_timer;
+std::thread* dealThread;
 }
 /**
  * @brief CVisionModule consturctor
@@ -27,9 +32,15 @@ CVisionModule::CVisionModule(QObject *parent)
     , udpSendSocket()
     , IF_EDGE_TEST(false)
     , interface(0){
+    dealThread = nullptr;
     std::fill_n(GlobalData::instance()->cameraUpdate, PARAM::CAMERA, false);
     std::fill_n(GlobalData::instance()->cameraControl, PARAM::CAMERA, true);
     std::fill_n(GlobalData::instance()->processControl, 3, true);
+    declare_receive("ssl_vision");
+    declare_publish("sim_signal");
+    SSLWorld::instance()->link(this,"ssl_vision");
+    this->link(SSLWorld::instance(),"sim_signal");
+    SSLWorld::instance()->start();
 }
 /**
  * @brief connect UDP for receive vision
@@ -45,12 +56,20 @@ void CVisionModule::udpSocketConnect(bool real) {
     real ? zpm->loadParam(vision_port, "AlertPorts/Vision4Real", 10005) : zpm->loadParam(vision_port, "AlertPorts/Vision4Sim", 10020);
     zpm->loadParam(saoAction, "Alert/SaoAction", 0);
     GlobalData::instance()->setCameraMatrix(real);
-    qDebug() << "VisionPort : " << vision_port;
-    udpReceiveSocket.bind(QHostAddress::AnyIPv4, vision_port, QUdpSocket::ShareAddress);
-    udpReceiveSocket.joinMulticastGroup(QHostAddress(ZSS::SSL_ADDRESS),ZNetworkInterfaces::instance()->getFromIndex(interface));
-    connect(&udpReceiveSocket, SIGNAL(readyRead()), this, SLOT(storeData()), Qt::DirectConnection);
+    if(real){
+        qDebug() << "VisionPort : " << vision_port;
+        udpReceiveSocket.bind(QHostAddress::AnyIPv4, vision_port, QUdpSocket::ShareAddress);
+        udpReceiveSocket.joinMulticastGroup(QHostAddress(ZSS::SSL_ADDRESS),ZNetworkInterfaces::instance()->getFromIndex(interface));
+        connect(&udpReceiveSocket, SIGNAL(readyRead()), this, SLOT(storeData()), Qt::DirectConnection);
+    }
+    else{
+        connect(&sim_timer,SIGNAL(timeout()),this,SLOT(oneStepSimData()),Qt::DirectConnection);
+        dealThread = new std::thread([ = ] {readSimData();});
+        dealThread->detach();
+        sim_timer.start(16);
+    }
+    ReceiveVisionMessage temp;
     for (int i = 0; i < PARAM::CAMERA; i++) {
-        ReceiveVisionMessage temp;
         GlobalData::instance()->camera[i].push(temp);
     }
 }
@@ -75,6 +94,10 @@ void CVisionModule::udpSocketDisconnect() {
     disconnect(&udpReceiveSocket);
     udpReceiveSocket.abort();
     udpSendSocket.abort();
+    disconnect(&sim_timer);
+    sim_timer.stop();
+    delete dealThread;
+    dealThread = nullptr;
 }
 /**
  * @brief convert between different field size
@@ -125,6 +148,17 @@ void CVisionModule::storeData() {
     while (udpReceiveSocket.hasPendingDatagrams()) {
         datagram.resize(udpReceiveSocket.pendingDatagramSize());
         udpReceiveSocket.readDatagram(datagram.data(), datagram.size());
+        parse((void*)datagram.data(), datagram.size());
+    }
+}
+void CVisionModule::oneStepSimData(){
+    publish("sim_signal");
+}
+void CVisionModule::readSimData(){
+    SetThreadName("VisionPluginThread");
+    static ZSData datagram;
+    while(true) {
+        receive("ssl_vision",datagram);
         parse((void*)datagram.data(), datagram.size());
     }
 }
@@ -278,11 +312,12 @@ void  CVisionModule::udpSend() {
  * @return
  */
 bool CVisionModule::collectNewVision() {
-    for (int i = 0; i < PARAM::CAMERA; i++) {
-        if (GlobalData::instance()->cameraControl[i] && !GlobalData::instance()->cameraUpdate[i])
-            return false;
-    }
-    return true;
+//    for (int i = 0; i < PARAM::CAMERA; i++) {
+//        qDebug() << "check : " << i << GlobalData::instance()->cameraControl[i];
+//        if (GlobalData::instance()->cameraControl[i] && !GlobalData::instance()->cameraUpdate[i])
+//            return false;
+//    }
+    return GlobalData::instance()->cameraUpdate[0];
 }
 /**
  * @brief filed edgeTest

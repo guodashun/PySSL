@@ -7,7 +7,8 @@
 #include "vision_detection.pb.h"
 #include "staticparams.h"
 #include "messageformat.h"
-class CVisionModule : public QObject {
+#include "zsplugin.hpp"
+class CVisionModule : public QObject,public ZSPlugin  {
     Q_OBJECT
   public:
     CVisionModule(QObject *parent = 0);
@@ -23,7 +24,9 @@ class CVisionModule : public QObject {
     void needDraw();
   public slots:
     void storeData();
+    void oneStepSimData();
   private:
+    void readSimData();
     CGeoPoint saoConvert(CGeoPoint);
     double saoConvert(double);
     void edgeTest();
