@@ -42,7 +42,8 @@ void CSimulator::controlRobot(int num,bool team){
     double dir = (team ? 180 : 0);
     double ratio = (team ? 1 : -1);
     auto* replacement = packet.mutable_replacement();
-    for(int i=PARAM::ROBOTMAXID-1;i>PARAM::ROBOTMAXID-num-1;i--){
+//    for(int i=PARAM::ROBOTMAXID-1;i>PARAM::ROBOTMAXID-num-1;i--){
+    for(int i=0;i<num;i++){
         auto* robot = replacement->add_robots();
         robot->set_x(ratio*(i+1)*0.3);
         robot->set_y(0);//(yIn[i]);
@@ -51,7 +52,7 @@ void CSimulator::controlRobot(int num,bool team){
         robot->set_yellowteam(team);
         robot->set_turnon(true);
     }
-    for(int i=PARAM::ROBOTMAXID-num-1;i>=0;i--){
+    for(int i=num;i<PARAM::ROBOTMAXID;i++){
         auto* robot = replacement->add_robots();
         robot->set_x(ratio*i*0.3);
         robot->set_y(-5.5);

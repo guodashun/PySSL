@@ -48,7 +48,7 @@ const static QColor COLOR_YELLOW(221,210,59);
 const static QColor COLOR_LIGHTYELLOW(221,210,59, 50);
 const static qreal zoomStep = 0.05;
 const static qreal zoomMin = 0.1;
-const int ballRatio = 2;
+const int ballRatio = 3;
 int canvasHeight;
 int canvasWidth;
 int param_width;
@@ -689,7 +689,7 @@ void Field::drawMaintainVision(int index) {
         for(int color = PARAM::BLUE; color <= PARAM::YELLOW; color++) {
             for(int j = 0; j < robot_vision.robotSize[color]; j++) {
                 auto& robot = robot_vision.robot[color][j];
-                paintCar(CAR_COLOR[color], robot.id, robot.pos.x(), robot.pos.y(), robot.angle, true, FONT_COLOR[color], robot.id == last_touch && color == last_touch_team);
+                paintCar(CAR_COLOR[color], robot.id, robot.pos.x(), robot.pos.y(), robot.angle, true, FONT_COLOR[color], false/*robot.id == last_touch && color == last_touch_team*/);
 //            paintCarShadow(robot.pos.x(), robot.pos.y(), robot.angle);
             }
         }
@@ -705,7 +705,7 @@ void Field::drawMaintainVision(int index) {
     for(int j = 0; j < maintain.ballSize; j++) {
         auto& ball = maintain.ball[j];
         paintBall(ball.valid ? COLOR_ORANGE : COLOR_ORANGE_SHADOW, ball.pos.x(), ball.pos.y());
-        paintFocus(ball.valid ? COLOR_RED : COLOR_RED_SHADOW, ball.pos.x(), ball.pos.y(), 500, ballFocusCount++);
+//        paintFocus(ball.valid ? COLOR_RED : COLOR_RED_SHADOW, ball.pos.x(), ball.pos.y(), 500, ballFocusCount++);
     }
 }
 void Field::paintCar(const QColor& color, quint8 num, qreal x, qreal y, qreal radian, bool ifDrawNum, const QColor& textColor, bool needCircle) {
@@ -728,7 +728,7 @@ void Field::paintCar(const QColor& color, quint8 num, qreal x, qreal y, qreal ra
         int fontSize = ::h(-numberSize);
         font.setPixelSize(fontSize);
         pixmapPainter.setFont(font);
-        pixmapPainter.drawText(::x(x - numberSize), ::y(y + carDiameter * 0.4), QString::number(num, 16).toUpper());
+        pixmapPainter.drawText(::x(x - numberSize*0.8), ::y(y + carDiameter * 0.35), QString::number(num, 16).toUpper());
     }
 }
 void Field::paintSelectedCar() {
