@@ -1,2 +1,2 @@
-# iLoboke_PySSL
-iLoboke Python SSL code
+# SSL_lesson platform
+SSL platform code
