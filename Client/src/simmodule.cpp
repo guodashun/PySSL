@@ -10,7 +10,7 @@
 #include <cmath>
 #include <geometry.h>
 #include <qdebug.h>
-
+#include "sim/sslworld.h"
 namespace ZSS {
 namespace {
 bool trans_dribble(double dribble) {
@@ -31,6 +31,8 @@ grSim_Robot_Command *grsim_robots[PARAM::ROBOTNUM];
 
 }
 SimModule::SimModule(QObject *parent) : QObject(parent) {
+    declare_publish("sim_packet");
+    this->link(SSLWorld::instance(),"sim_packet");
     grsim_commands = grsim_packet.mutable_commands();
     for (int i = 0; i < PARAM::ROBOTNUM; i++) {
         grsim_robots[i] = grsim_commands->add_robot_commands();
@@ -146,6 +148,7 @@ void SimModule::readYellowData() {
 }
 
 void SimModule::sendSim(int t, Robots_Command& command) {
+    static ZSData data;
     grsim_commands->set_timestamp(0);
     if (t == 0) {
         grsim_commands->set_isteamyellow(false);
@@ -193,9 +196,9 @@ void SimModule::sendSim(int t, Robots_Command& command) {
         grsim_robots[id]->set_spinner(trans_dribble(commands.dribbler_spin()));
     }
     int size = grsim_packet.ByteSize();
-    QByteArray data(size, 0);
-    grsim_packet.SerializeToArray(data.data(), data.size());
-    command_socket.writeDatagram(data, size, QHostAddress(ZSS::LOCAL_ADDRESS), ZSS::Athena::SIM_SEND);
+    data.resize(size);
+    grsim_packet.SerializeToArray(data.ptr(), size);
+    publish("sim_packet",data);
     for (int i = 0; i < PARAM::ROBOTNUM; i++) {
         grsim_robots[i]->set_id(i);
         grsim_robots[i]->set_kickspeedx(0);

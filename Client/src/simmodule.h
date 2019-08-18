@@ -5,9 +5,9 @@
 #include <QUdpSocket>
 #include "singleton.hpp"
 #include "zss_cmd.pb.h"
-
+#include "zsplugin.hpp"
 namespace ZSS{
-class SimModule : public QObject{
+class SimModule : public QObject, public ZSPlugin{
     Q_OBJECT
 public:
     SimModule(QObject *parent = 0);
