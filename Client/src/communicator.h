@@ -14,6 +14,7 @@ class Communicator : public QObject {
     ~Communicator();
     bool connectMedusa(int);
     bool disconnectMedusa(int);
+    void reloadSimulation();
     int getFPS(int);
     const RobotCommands getCommands(int t) {
         return commandBuffer[t];

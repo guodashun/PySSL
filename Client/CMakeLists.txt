@@ -8,9 +8,9 @@ set(MAINTAINER "ZJUNlict <zjunlict.ssl@gmail.com>")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread")
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
 standard_config()
@@ -59,8 +59,8 @@ find_package(ZLIB)
 include_directories(${ZLIB_INCLUDE_DIRS})
 list(APPEND libs ${ZLIB_LIBRARIES})
 ## find Qt
-find_package(Qt5 COMPONENTS Core Quick REQUIRED)
-list(APPEND libs Qt5::Core Qt5::Quick)
+find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
+list(APPEND libs Qt5::Core Qt5::Quick Qt5::SerialPort)
 
 # project files
 ## protobuf files

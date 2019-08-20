@@ -5,7 +5,6 @@
 #include <thread>
 #include <list>
 #include <map>
-#include <shared_mutex>
 #include <mutex>
 #include <cstring>
 #include <condition_variable>
@@ -57,7 +56,7 @@ public:
     }
     // thread-safe
     virtual int size() const {
-        std::shared_lock<std::shared_mutex> lock(_mutex);
+        std::unique_lock<std::mutex> lock(_mutex);
         return _size;
     }
     virtual const void* data() const { return _data; }
@@ -65,7 +64,7 @@ public:
         store(data.data(),data._size);
     }
     virtual void store(const void* const data,unsigned long size){
-        std::unique_lock<std::shared_mutex> lock(_mutex);
+        std::unique_lock<std::mutex> lock(_mutex);
         resize(size);
         if(size > 40000){
             std::cerr << "size too large, maybe forget to clear?" << std::endl;
@@ -90,7 +89,7 @@ protected:
     unsigned long _size;
     int _capacity;
     void* _data;
-    mutable std::shared_mutex _mutex;
+    mutable std::mutex _mutex;
 };
 class ZSSemaData:public ZSData,public Semaphore{
 

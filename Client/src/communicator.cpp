@@ -57,7 +57,9 @@ bool Communicator::disconnectMedusa(int t) {
     receiveSocket[t].disconnectFromHost();
     return true;
 }
-
+void Communicator::reloadSimulation(){
+    ZSS::ZParamManager::instance()->loadParam(isSimulation, "Alert/IsSimulation", false);
+}
 void Communicator::receiveCommand(int t) {
     QByteArray datagram;
     while(true) {
@@ -77,9 +79,12 @@ void Communicator::receiveCommand(int t) {
                 commandBuffer[t].robotSpeed[command.robot_id()] = rs;
             }
             if(isSimulation) {
+                qDebug() << "simulation";
                 ZSS::ZSimModule::instance()->sendSim(t, commands);
             } else {
-                ZSS::ZActionModule::instance()->sendLegacy(t, commands);
+                qDebug() << "realreal!";
+//                ZSS::ZActionModule::instance()->sendLegacy(t, commands);
+                ZSS::NActionModule::instance()->sendLegacy(commands);
             }
         }
     }

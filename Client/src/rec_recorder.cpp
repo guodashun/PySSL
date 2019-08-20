@@ -10,7 +10,7 @@
 namespace  {
 auto GS = GlobalSettings::instance();
 //RecMsg recMsg;
-bool isRun = true;
+bool isRun = false;
 
 QFile recordFile;
 QIODevice* recIO;
@@ -22,7 +22,7 @@ RecRecorder::RecRecorder() {
 
 }
 void RecRecorder::init() {
-    isRun = true;
+    isRun = false;
 //        qDebug() << "I AM RUNNING";
     QDateTime datetime;
 //        qDebug() << datetime.currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");

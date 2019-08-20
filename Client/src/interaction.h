@@ -40,21 +40,13 @@ class Interaction : public QObject {
         return DealBall::instance()->getBallSpeed();
     }
     Q_INVOKABLE void robotControl(int, int);
-//    Q_INVOKABLE bool send(const QString& str) {
-//        return ZCommunicator::instance()->testSend(str);
-//    }
-//    Q_INVOKABLE QStringList getNetworkInterfaces() {
-//        return ZCommunicator::instance()->updateNetworkInterfaces();
-//    }
-//    Q_INVOKABLE bool changeConnection(bool sw) {
-//        if(sw)
-//            return ZCommunicator::instance()->connect();
-//        else
-//            return ZCommunicator::instance()->disconnect();
-//    }
-//    Q_INVOKABLE void changeNetworkInterface(int index) {
-//        ZCommunicator::instance()->changeNetworkInterface(index);
-//    }
+
+    Q_INVOKABLE bool connectSerialPort(bool);
+    Q_INVOKABLE bool changeSerialFrequency(int);
+    Q_INVOKABLE bool changeSerialPort(int);
+    Q_INVOKABLE QStringList getSerialPortsList();
+    Q_INVOKABLE int getFrequency();
+
     ~Interaction();
 public slots:
     void medusaPrint();

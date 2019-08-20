@@ -29,6 +29,7 @@ Page{
         onTriggered: {
             interaction.updateInterfaces();
             interfaces4vision.updateModel();
+            radioComboBox.updateModel();
 //            interfaces4BlueSender.updateModel();
 //            interfaces4BlueReceiver.updateModel();
 //            interfaces4YellowSender.updateModel();
@@ -158,6 +159,50 @@ Page{
                         onClicked: {
                             visionControls.ifConnected = !visionControls.ifConnected;
                             interaction.setVision(visionControls.ifConnected,simulation.checked);
+                        }
+                    }
+                }
+            }
+            ZGroupBox{
+                title: qsTr("Radio")
+                Grid{
+                    width:parent.width;
+                    verticalItemAlignment: Grid.AlignVCenter;
+                    horizontalItemAlignment: Grid.AlignHCenter;
+                    spacing: 0;
+                    columns:1;
+                    property int itemWidth : width - 2*padding;
+                    SpinBox{
+                        width:parent.itemWidth;
+                        from:0;to:15;
+                        wrap:true;
+                        value:interaction.getFrequency();
+                        onValueModified: {
+                            if(!interaction.changeSerialFrequency(value))
+                                value:interaction.getFrequency();
+                        }
+                    }
+                    ComboBox{
+                        id:radioComboBox;
+                        enabled: !control.radioConnect;
+                        model:interaction.getSerialPortsList();
+                        onActivated: interaction.changeSerialPort(currentIndex);
+                        width:parent.itemWidth;
+                        function updateModel(){
+                            model = interaction.getSerialPortsList();
+                            if(currentIndex >= 0)
+                                interaction.changeSerialPort(currentIndex);
+                        }
+                        Component.onCompleted: updateModel();
+                    }
+                    Button{
+                        width:parent.itemWidth;
+                        icon.source:control.radioConnect ? "/source/connect.png" : "/source/disconnect.png";
+                        onClicked: {
+                            control.radioConnect = !control.radioConnect;
+                            if(!interaction.connectSerialPort(control.radioConnect)){
+                                control.radioConnect = !control.radioConnect;
+                            }
                         }
                     }
                 }

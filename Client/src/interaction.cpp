@@ -89,13 +89,15 @@ void Interaction::setVision(bool needStart, bool real) {
     ZSS::ZActionModule::instance()->setSimulation(!real);
     if (needStart) {
         ZSS::ZParamManager::instance()->changeParam("Alert/IsSimulation", !real);
+        ZCommunicator::instance()->reloadSimulation();
         VisionModule::instance()->udpSocketConnect(real);
-        if (real) RefereeThread::instance()->start();
-        //Maintain::instance()->udpSocketConnect();
+//        if (real) RefereeThread::instance()->start();
+//        Maintain::instance()->udpSocketConnect();
     } else {
         ZSS::ZParamManager::instance()->changeParam("Alert/IsSimulation", !real);
+        ZCommunicator::instance()->reloadSimulation();
         VisionModule::instance()->udpSocketDisconnect();
-        RefereeThread::instance()->disconnectTCP();
+//        RefereeThread::instance()->disconnectTCP();
         //Maintain::instance()->udpSocketDisconnect();
     }
 }
@@ -275,4 +277,24 @@ void Interaction::kill() {
     killTask.execute(athena);
     killTask.close();
 }
+bool Interaction::connectSerialPort(bool sw){
+    if(sw){
+        return ZSS::NActionModule::instance()->init();
+    }
+    return ZSS::NActionModule::instance()->closeSerialPort();
+}
 
+bool Interaction::changeSerialFrequency(int frequency){
+    return ZSS::NActionModule::instance()->changeFrequency(frequency);
+}
+
+bool Interaction::changeSerialPort(int index){
+    return ZSS::NActionModule::instance()->changePorts(index);
+}
+
+QStringList Interaction::getSerialPortsList(){
+    return ZSS::NActionModule::instance()->updatePortsList();
+}
+int Interaction::getFrequency(){
+    return ZSS::NActionModule::instance()->getFrequency();
+}

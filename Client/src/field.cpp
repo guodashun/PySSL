@@ -840,7 +840,7 @@ void Field::drawDebugMessages(int team) {
             minx = std::min(x1,x2);
             miny = std::min(y1,y2);
             maxx = std::max(x1,x2);
-            maxy = std::max(x1,x2);
+            maxy = std::max(y1,y2);
             pixmapPainter.drawArc(QRectF( ::x(double(minx) * 10),
                                           ::y(double(miny) * 10),
                                           ::w((maxx - minx) * 10),
