@@ -1,4 +1,4 @@
-import lib.cmdItf as cmdItf
+import cmdItf
 from PyQt5.QtCore import QObject, pyqtSlot
 
 class Interaction(QObject):
