@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
 	name = 'PySSL',
-	version = '0.0.3',
+	version = '0.0.4',
 	description = 'Basic libraries for SSL',
 	packages = ['cmdIf', 'visionIf'],
 	package_data = {
