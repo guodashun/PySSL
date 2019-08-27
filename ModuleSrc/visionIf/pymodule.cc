@@ -36,8 +36,8 @@ BOOST_PYTHON_MODULE(visionIf) {
     	.def_readonly("raw_rotate_vel", &ZVision_DetectionRobot::raw_rotate_vel);
     class_<ZVision_DetectionFrame>("Vision_DetectionFrame")
         .def_readonly("ball", &ZVision_DetectionFrame::ball)
-        .def_readonly("robots_yellow", &ZVision_DetectionFrame::robots_yellow)
-        .def_readonly("robots_blue;", &ZVision_DetectionFrame::robots_blue);
+        .def("robots_yellow", &ZVision_DetectionFrame::get_robots_yellow)
+        .def("robots_blue", &ZVision_DetectionFrame::get_robots_blue);
     class_<VisionModule>("vm", init<int>())
     	.def("getVision", &VisionModule::getVision);
 }

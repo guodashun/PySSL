@@ -56,6 +56,18 @@ struct ZVision_DetectionFrame {
     ZVision_DetectionBall  ball;   
     ZVision_DetectionRobot robots_yellow[ROBOT_MAX_NUM];
     ZVision_DetectionRobot robots_blue[ROBOT_MAX_NUM];
+    ZVision_DetectionRobot get_robots_yellow(int index){
+        if (index >= 0 && index < ROBOT_MAX_NUM) {
+            return this->robots_yellow[index];
+        } else
+            return this->robots_yellow[0];
+    }
+    ZVision_DetectionRobot get_robots_blue(int index){
+        if (index >= 0 && index < ROBOT_MAX_NUM) {
+            return this->robots_blue[index];
+        } else
+            return this->robots_blue[0];
+    }
 };
 
 class VisionModule{
