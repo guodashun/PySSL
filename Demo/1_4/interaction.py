@@ -1,4 +1,4 @@
-import cmdIf
+import pyssl.cmdIf
 from PyQt5.QtCore import QObject, pyqtSlot
 
 class Interaction(QObject):
