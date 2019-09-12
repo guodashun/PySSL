@@ -31,7 +31,7 @@ CVisionModule::CVisionModule(QObject *parent)
     , udpReceiveSocket()
     , udpSendSocket()
     , IF_EDGE_TEST(false)
-    , interface(0){
+    , _interface(0){
     dealThread = nullptr;
     std::fill_n(GlobalData::instance()->cameraUpdate, PARAM::CAMERA, false);
     std::fill_n(GlobalData::instance()->cameraControl, PARAM::CAMERA, true);
@@ -59,7 +59,7 @@ void CVisionModule::udpSocketConnect(bool real) {
     if(real){
         qDebug() << "VisionPort : " << vision_port;
         udpReceiveSocket.bind(QHostAddress::AnyIPv4, vision_port, QUdpSocket::ShareAddress);
-        udpReceiveSocket.joinMulticastGroup(QHostAddress(ZSS::SSL_ADDRESS),ZNetworkInterfaces::instance()->getFromIndex(interface));
+        udpReceiveSocket.joinMulticastGroup(QHostAddress(ZSS::SSL_ADDRESS),ZNetworkInterfaces::instance()->getFromIndex(_interface));
         connect(&udpReceiveSocket, SIGNAL(readyRead()), this, SLOT(storeData()), Qt::DirectConnection);
     }
     else{
@@ -73,7 +73,7 @@ void CVisionModule::udpSocketConnect(bool real) {
         GlobalData::instance()->camera[i].push(temp);
     }
 }
-void CVisionModule::setInterfaceIndex(const int index){ interface = index; }
+void CVisionModule::setInterfaceIndex(const int index){ _interface = index; }
 /**
  * @brief disconnect UDP
  */

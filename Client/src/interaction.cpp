@@ -257,13 +257,13 @@ void Interaction::kill() {
     QProcess killTask;
 #ifdef WIN32
     RefereeThread::instance()->disconnectTCP();
-    QString athena = "taskkill -im Athena.exe -f";
-    QString medusa = "taskkill -im Medusa.exe -f";
-    QString grSim = "taskkill -im grSim.exe -f";
+    QString athena = "taskkill -im Client.exe -f";
+	//QString medusa = "taskkill -im Medusa.exe -f";
+    //QString grSim = "taskkill -im grSim.exe -f";
 #else
     QString athena = "pkill Client";
-    QString medusa = "pkill Medusa";
-    QString grSim = "pkill grsim";
+    //QString medusa = "pkill Medusa";
+    //QString grSim = "pkill grsim";
 #endif
     if (monitorProcess != nullptr) {
         if (monitorProcess->isOpen()) {
@@ -272,8 +272,8 @@ void Interaction::kill() {
         delete monitorProcess;
         monitorProcess = nullptr;
     }
-    killTask.execute(medusa);
-    killTask.execute(grSim);
+    //killTask.execute(medusa);
+    //killTask.execute(grSim);
     killTask.execute(athena);
     killTask.close();
 }

@@ -15,11 +15,25 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
 standard_config()
 standard_paths(${PROJECT_SOURCE_DIR} bin lib)
-
+if (NOT UNIX AND NOT APPLE)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+endif()
+include(ProcessorCount)
+ProcessorCount(N)
+if(NOT N EQUAL 0)
+    SET(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   /MP${N} ")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP${N} ")
+endif()
 set(libs)
 
 # define protobuf generater
 find_package(Protobuf REQUIRED)
+if (NOT UNIX AND NOT APPLE)
+    set(PROTOBUF_INCLUDE_DIRS "C:/usr/local/protobuf/include")
+    set(Protobuf_LIBRARIES "C:/usr/local/protobuf/lib/libprotobuf.lib")
+else()
+    find_package(Protobuf REQUIRED)
+endif()
 function(get_pb_file H CPP)
     list(APPEND PH ${ARGN})
     list(APPEND PC ${ARGN})
@@ -48,19 +62,25 @@ FOREACH(FIL ${PROTO_FILES})
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 ENDFOREACH()
+
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 list(APPEND libs ${Protobuf_LIBRARIES})
 
-## find Eigen
-find_package(Eigen3 REQUIRED)
+## find Eigen Zlib
+if (NOT UNIX AND NOT APPLE)
+    set(EIGEN3_INCLUDE_DIR "C:/usr/local/Eigen")
+    set(ZLIB_INCLUDE_DIRS "C:/usr/local/zlib/include")
+    set(ZLIB_LIBRARIES "C:/usr/local/zlib/lib/zlib.lib")
+else()
+    find_package(Eigen3 REQUIRED)
+    find_package(ZLIB)
+endif()
 include_directories(${EIGEN3_INCLUDE_DIR})
-## find Zlib
-find_package(ZLIB)
 include_directories(${ZLIB_INCLUDE_DIRS})
 list(APPEND libs ${ZLIB_LIBRARIES})
 ## find Qt
 find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
-list(APPEND libs Qt5::Core Qt5::Quick Qt5::SerialPort)
+list(APPEND libs Qt5::Core Qt5::Quick Qt5::SerialPort Qt5::WinMain)
 
 # project files
 ## protobuf files
@@ -117,6 +137,6 @@ set(SRC
 set(zss_libs
     zss_simulator
 )
-add_executable(${PROJECT_NAME} ${SRC} "Client.qrc")
+add_executable(${PROJECT_NAME} ${SRC} "Client.qrc" "Client.rc")
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${libs} ${zss_libs})

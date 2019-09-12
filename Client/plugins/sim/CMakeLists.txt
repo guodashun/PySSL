@@ -15,13 +15,23 @@ list(APPEND PROJECT_INCLUDE_DIRS
 list(APPEND libs Qt5::Core Qt5::Network Qt5::Gui)
 
 # ODE
+if (NOT UNIX AND NOT APPLE)
+set(ODE_INCLUDE_DIRS "C:/usr/local/ode/include")
+set(ODE_LIBRARIES "C:/usr/local/ode/lib/ode.lib")
+else()
 find_package(ODE REQUIRED)
+endif()
 list(APPEND PROJECT_INCLUDE_DIRS ${ODE_INCLUDE_DIRS})
 list(APPEND libs ${ODE_LIBRARIES})
 # add_definitions(-DdDOUBLE)
 
 # Protobuf
+if (NOT UNIX AND NOT APPLE)
+set(PROTOBUF_INCLUDE_DIRS "C:/usr/local/protobuf/include")
+set(Protobuf_LIBRARIES "C:/usr/local/protobuf/lib/libprotobuf.lib")
+else()
 find_package(Protobuf REQUIRED)
+endif()
 list(APPEND PROJECT_INCLUDE_DIRS ${PROTOBUF_INCLUDE_DIRS})
 list(APPEND libs ${Protobuf_LIBRARIES})
 

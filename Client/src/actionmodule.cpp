@@ -28,9 +28,11 @@ const QString radioReceiveAddress[PARAM::TEAMS] = {"10.10.11.23", "10.10.11.23"}
 int blue_sender_interface,blue_receiver_interface,yellow_sender_interface,yellow_receiver_interface;
 std::thread* receiveThread = nullptr;
 bool IS_SIMULATION;
+bool NoVelY = true;
 }
 
 ActionModule::ActionModule(QObject *parent) : QObject(parent), team{-1, -1} {
+	ZSS::ZParamManager::instance()->loadParam(NoVelY, "Lesson/NoVelY", true);
     blue_sender_interface = blue_receiver_interface = yellow_sender_interface = yellow_receiver_interface = 0;
     tx.resize(TRANSMIT_PACKET_SIZE);
     tx[0] = 0x40;
@@ -272,7 +274,7 @@ void encodeLegacy(const Robot_Command& command, QByteArray& tx, int num) {
     // id  0 ~ 15
     quint8 id = (quint8)command.robot_id();
     double origin_vx = command.velocity_x();
-    double origin_vy = command.velocity_y();
+    double origin_vy = NoVelY ? 0.0f : command.velocity_y();
     double origin_vr = command.velocity_r();
     double dt = 1. / Athena::FRAME_RATE;
     double theta = - origin_vr * dt;

@@ -35,7 +35,7 @@ class CVisionModule : public QObject,public ZSPlugin  {
     QUdpSocket udpReceiveSocket, udpSendSocket;
     QHostAddress groupAddress;
     quint64 counter;
-    int interface;
+    int _interface;
     int vision_port;
     int saoAction;
     bool collectNewVision();

@@ -96,7 +96,7 @@ void KunDebugEngine::gui_debug_robot(const CGeoPoint& p, double robot_dir){
     Debug_Robot* robot = msg->mutable_robot();
 
 	float rdir;
-    rdir = robot_dir*180/M_PI; // 转成角度
+    rdir = robot_dir*180/3.14159265; // 转成角度
 	robot->set_dir(rdir);
 
     Point* robot_pos = robot->mutable_pos();

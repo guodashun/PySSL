@@ -13,6 +13,7 @@
 #include "sim/sslworld.h"
 namespace ZSS {
 namespace {
+bool NoVelY = true;
 bool trans_dribble(double dribble) {
     return dribble>1;
 }
@@ -31,6 +32,7 @@ grSim_Robot_Command *grsim_robots[PARAM::ROBOTNUM];
 
 }
 SimModule::SimModule(QObject *parent) : QObject(parent) {
+	ZSS::ZParamManager::instance()->loadParam(NoVelY, "Lesson/NoVelY", true);
     declare_publish("sim_packet");
     this->link(SSLWorld::instance(),"sim_packet");
     grsim_commands = grsim_packet.mutable_commands();
@@ -176,7 +178,7 @@ void SimModule::sendSim(int t, Robots_Command& command) {
         }
         //set velocity and dribble
         double vx = commands.velocity_x();
-        double vy = commands.velocity_y();
+        double vy = NoVelY ? 0.0f : commands.velocity_y();
         double vr = commands.velocity_r();
         double dt = 1. / Athena::FRAME_RATE;
         double theta = - vr * dt;

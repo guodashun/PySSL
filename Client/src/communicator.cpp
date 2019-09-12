@@ -14,6 +14,7 @@ namespace {
 int fps[2] = {0, 0};
 std::mutex m_fps;
 std::thread* receiveThread[PARAM::TEAMS];
+bool NoVelY = true;
 }
 int Communicator::getFPS(int t) {
     int res = 0;
@@ -25,6 +26,7 @@ int Communicator::getFPS(int t) {
 }
 
 Communicator::Communicator(QObject *parent) : QObject(parent) {
+	ZSS::ZParamManager::instance()->loadParam(NoVelY, "Lesson/NoVelY", true);
     QObject::connect(ZSS::ZSimModule::instance(), SIGNAL(receiveSimInfo(int, int)), this, SLOT(sendCommand(int, int)));
     QObject::connect(ZSS::ZActionModule::instance(), SIGNAL(receiveRobotInfo(int, int)), this, SLOT(sendCommand(int, int)));
     for(int i = 0; i < PARAM::TEAMS; i++) {
@@ -75,7 +77,8 @@ void Communicator::receiveCommand(int t) {
             commandBuffer[t].valid = true;
             for(int i = 0; i < commands.command_size(); i++) {
                 auto& command = commands.command(i);
-                RobotSpeed rs(command.velocity_x(), command.velocity_y(), command.velocity_r());
+				auto vy = NoVelY ? 0.0f : command.velocity_y();
+                RobotSpeed rs(command.velocity_x(), vy, command.velocity_r());
                 commandBuffer[t].robotSpeed[command.robot_id()] = rs;
             }
             if(isSimulation) {
