@@ -6,12 +6,13 @@
 #include <QDataStream>
 #include <QFile>
 #include <QFileInfo>
-
+#include "parammanager.h"
+#include <cmath>
 namespace  {
 auto GS = GlobalSettings::instance();
 //RecMsg recMsg;
-bool isRun = false;
-
+bool isRun = true;
+bool DRAW_VELOCITY = true;
 QFile recordFile;
 QIODevice* recIO;
 QString filename;
@@ -19,10 +20,10 @@ QString filename;
 //QTime timer;
 }
 RecRecorder::RecRecorder() {
-
+    ZSS::ZParamManager::instance()->loadParam(DRAW_VELOCITY,"Lesson/DrawVelocity",true);
 }
 void RecRecorder::init() {
-    isRun = false;
+    isRun = true;
 //        qDebug() << "I AM RUNNING";
     QDateTime datetime;
 //        qDebug() << datetime.currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
@@ -92,14 +93,59 @@ void RecRecorder::store() {
         GlobalData::instance()->debugMutex.lock();
         for (int team = PARAM::BLUE; team <= PARAM::YELLOW; team++) {
             debugMsgs = recMsg.add_debugmsgs();
-            if (team == 0) {
+            if (team == PARAM::BLUE) {
                 debugMsgs->ParseFromArray(GlobalData::instance()->debugBlueMessages.data(), GlobalData::instance()->debugBlueMessages.size());
+                qDebug() << "before : " << recMsg.ByteSize();
+                if(DRAW_VELOCITY){
+                    auto vision = maintainMsg;
+                    auto robot = vision.robot[PARAM::BLUE][0];
+                    if(vision.robotSize[PARAM::BLUE] > 0){
+                        auto data = GlobalData::instance()->robotCommand[PARAM::BLUE];
+                        auto vel = data[0].robotSpeed[0];
+                        auto lVel = data[-1].robotSpeed[0];
+                        // vel x
+                        {
+                            auto msg = debugMsgs->add_msgs();
+                            msg->set_color(Debug_Msg_Color_CYAN);
+                            msg->set_type(Debug_Msg_Debug_Type_TEXT);
+                            auto text = msg->mutable_text();
+                            auto pos = text->mutable_pos();
+                            pos->set_x(robot.pos.x()/10+15);
+                            pos->set_y(robot.pos.y()/10+18);
+                            text->set_text(QString("vx:%1,ax:%2").arg(vel.vx/100,0,'f',2).arg(fabs(lVel.vx - vel.vx)/100,0,'f',2).toLatin1());
+                        }
+                        // vel y
+                        {
+                            auto msg = debugMsgs->add_msgs();
+                            msg->set_color(Debug_Msg_Color_CYAN);
+                            msg->set_type(Debug_Msg_Debug_Type_TEXT);
+                            auto text = msg->mutable_text();
+                            auto pos = text->mutable_pos();
+                            pos->set_x(robot.pos.x()/10+15);
+                            pos->set_y(robot.pos.y()/10+5);
+                            text->set_text(QString("vy:%1").arg(vel.vy/100,0,'f',2).toLatin1());//m
+                        }
+                        // vel w
+                        {
+                            auto msg = debugMsgs->add_msgs();
+                            msg->set_color(Debug_Msg_Color_CYAN);
+                            msg->set_type(Debug_Msg_Debug_Type_TEXT);
+                            auto text = msg->mutable_text();
+                            auto pos = text->mutable_pos();
+                            pos->set_x(robot.pos.x()/10+15);
+                            pos->set_y(robot.pos.y()/10-8);
+                            text->set_text(QString("vw:%1,aw:%2").arg(vel.vr,0,'f',2).arg(fabs(lVel.vr - vel.vr),0,'f',2).toLatin1());
+                        }
+                    }
+                }
+                qDebug() << "after : " << recMsg.ByteSize();
             } else {
                 debugMsgs->ParseFromArray(GlobalData::instance()->debugYellowMessages.data(), GlobalData::instance()->debugYellowMessages.size());
             }
             //        qDebug() << "FUCK DEBUG MESSAGE SIZE" <<  debugMsgs->ByteSize();
             //        qDebug() << "FUCK DEBUG MESSAGE SIZE" <<  recMsg.debugmsgs(0).ByteSize();
         }
+
         GlobalData::instance()->debugMutex.unlock();
         //    Field::repaintUnlock();
 
