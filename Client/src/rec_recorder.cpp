@@ -112,7 +112,7 @@ void RecRecorder::store() {
                             auto pos = text->mutable_pos();
                             pos->set_x(robot.pos.x()/10+15);
                             pos->set_y(robot.pos.y()/10+18);
-                            text->set_text(QString("vx:%1,ax:%2").arg(vel.vx/100,0,'f',2).arg(fabs(lVel.vx - vel.vx)/100,0,'f',2).toLatin1());
+                            text->set_text(QString("vx:%1,ax:%2").arg(vel.vx/100,0,'f',4).arg(fabs(lVel.vx - vel.vx)/100,0,'f',4).toLatin1());
                         }
                         // vel y
                         {
@@ -134,7 +134,7 @@ void RecRecorder::store() {
                             auto pos = text->mutable_pos();
                             pos->set_x(robot.pos.x()/10+15);
                             pos->set_y(robot.pos.y()/10-8);
-                            text->set_text(QString("vw:%1,aw:%2").arg(vel.vr,0,'f',2).arg(fabs(lVel.vr - vel.vr),0,'f',2).toLatin1());
+                            text->set_text(QString("vw:%1,aw:%2").arg(vel.vr,0,'f',4).arg(fabs(lVel.vr - vel.vr),0,'f',4).toLatin1());
                         }
                     }
                 }
@@ -158,7 +158,9 @@ void RecRecorder::store() {
         //    recordFile->close();
         recordFile.close();
         recMsg.Clear();
-        if (recordFile.size() > (qint64)1024 * 1024 * 1024 * 5) {
+        if (recordFile.size() > (qint64)10
+            
+            4 * 1024 * 1024 * 5) {
             stop();
         }
     }
