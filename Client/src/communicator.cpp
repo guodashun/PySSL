@@ -82,10 +82,10 @@ void Communicator::receiveCommand(int t) {
                 commandBuffer[t].robotSpeed[command.robot_id()] = rs;
             }
             if(isSimulation) {
-                qDebug() << "simulation";
+//                qDebug() << "simulation";
                 ZSS::ZSimModule::instance()->sendSim(t, commands);
             } else {
-                qDebug() << "realreal!";
+//                qDebug() << "realreal!";
 //                ZSS::ZActionModule::instance()->sendLegacy(t, commands);
                 ZSS::NActionModule::instance()->sendLegacy(commands);
             }

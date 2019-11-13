@@ -10,11 +10,14 @@ namespace{
     const int TRANS_FEEDBACK_SIZE = 25;
     auto zpm = ZSS::ZParamManager::instance();
     struct NJ_Command{
-        bool valid;
-        int id;
+        float power;
+        float dribble;
         float vx;
         float vy;
         float vr;
+        int id;
+        bool valid;
+        bool kick_mode;
     };
     void encodeLegacy(const NJ_Command&,QByteArray&,int);
     quint8 kickStandardization(quint8,bool,quint8);
@@ -116,6 +119,9 @@ void ActionModuleSerialVersion::sendLegacy(const Robots_Command& commands){
             NJ_CMDS[id].vx = command.velocity_x();
             NJ_CMDS[id].vy = command.velocity_y();
             NJ_CMDS[id].vr = command.velocity_r()*40;
+            NJ_CMDS[id].dribble = command.dribbler_spin();
+            NJ_CMDS[id].power = command.power();
+            NJ_CMDS[id].kick_mode = command.kick();
         }
     }
 
@@ -218,7 +224,11 @@ void encodeLegacy(const NJ_Command& command,QByteArray& tx,int num){
     int real_num = command.id;
     qint16 vx = (qint16)(command.vx);
     qint16 vy = (qint16)(command.vy);
-    qint16 vr = (qint16)(command.vr);
+    qint16 ivr = (qint16)(command.vr);
+    qint16 vr = abs(ivr)> 511 ? (ivr > 0 ? 1 : -1)*(511) : (ivr);
+    qint16 power = (qint16)(command.power);
+    bool kick_mode = command.kick_mode;
+    qint16 dribble = (qint16)(command.dribble*3+0.4);
     // vx
     unsigned int vx_value_uint = (unsigned int)abs(vx);
     // vy
@@ -230,9 +240,8 @@ void encodeLegacy(const NJ_Command& command,QByteArray& tx,int num){
         TXBuff[1] = TXBuff[1] | 0x01 << (real_num - 8);
 
     TXBuff[2] =  TXBuff[2] | 0x01 << real_num;
-    // other
-    TXBuff[6*i + 3] = TXBuff[6*i + 3] & 0xf0;
-    TXBuff[6*i + 3] = TXBuff[6*i + 3] | 0x01;
+    // dribble & kick_mode
+    TXBuff[6*i + 3] = 0x01 | ((((kick_mode?0x01:0x00)<<2)|(0x03 & dribble))<<4);
 
     // velx
     if(vx < 0) TXBuff[6*i + 4] = TXBuff[6*i + 4] | (0x20);
@@ -247,8 +256,9 @@ void encodeLegacy(const NJ_Command& command,QByteArray& tx,int num){
     TXBuff[6*i + 6] = TXBuff[6*i + 6] | ((w_value_uint & 0x100) >> 8);
     TXBuff[6*i + 7] = TXBuff[6*i + 7] | (w_value_uint & 0x0ff);
 
+
     // shoot power
-    TXBuff[6*i + 8] = 0x00;
+    TXBuff[6*i + 8] = (quint8)power;
 
 
 }

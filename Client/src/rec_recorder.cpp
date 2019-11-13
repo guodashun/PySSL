@@ -95,7 +95,7 @@ void RecRecorder::store() {
             debugMsgs = recMsg.add_debugmsgs();
             if (team == PARAM::BLUE) {
                 debugMsgs->ParseFromArray(GlobalData::instance()->debugBlueMessages.data(), GlobalData::instance()->debugBlueMessages.size());
-                qDebug() << "before : " << recMsg.ByteSize();
+//                qDebug() << "before : " << recMsg.ByteSize();
                 if(DRAW_VELOCITY){
                     auto vision = maintainMsg;
                     auto robot = vision.robot[PARAM::BLUE][0];
@@ -138,7 +138,7 @@ void RecRecorder::store() {
                         }
                     }
                 }
-                qDebug() << "after : " << recMsg.ByteSize();
+//                qDebug() << "after : " << recMsg.ByteSize();
             } else {
                 debugMsgs->ParseFromArray(GlobalData::instance()->debugYellowMessages.data(), GlobalData::instance()->debugYellowMessages.size());
             }
@@ -158,9 +158,7 @@ void RecRecorder::store() {
         //    recordFile->close();
         recordFile.close();
         recMsg.Clear();
-        if (recordFile.size() > (qint64)10
-            
-            4 * 1024 * 1024 * 5) {
+        if (recordFile.size() > (qint64)1024 * 1024 * 1024 * 5) {
             stop();
         }
     }
